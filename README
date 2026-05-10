@@ -1,0 +1,53 @@
+# Airline Yield Management using CPLEX + OPL + CMake
+
+Implementation of a stochastic airline yield management model based on:
+
+H. Paul Williams — *Model Building in Mathematical Programming*.
+
+The project combines:
+- OPL modeling language
+- IBM CPLEX solver
+- C++ API integration
+- CMake build system
+- Multi-stage stochastic optimization
+
+---
+
+# Problem Description
+
+The model solves a multi-period airline pricing and seat allocation problem.
+
+The airline must:
+- decide ticket prices for multiple travel classes,
+- react dynamically to uncertain demand scenarios,
+- maximize expected profit,
+- determine fleet size (number of airplanes).
+
+The implementation includes:
+- adaptive pricing decisions,
+- scenario-dependent recourse,
+- capacity constraints,
+- stochastic demand modeling.
+
+---
+
+# Technologies
+
+- C++
+- IBM ILOG CPLEX Optimization Studio 22.1.2
+- OPL
+- CMake
+- Visual Studio 2022
+
+---
+
+# Project Structure
+
+```text
+YieldManagement/
+│
+├── CMakeLists.txt
+├── YieldManagement.cpp
+├── YieldMenag.mod
+├── YieldMenag.dat
+└── README.md
