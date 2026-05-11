@@ -1,48 +1,75 @@
-#ARTUR CZARNECKI
-#Index: 123475
-#Uniwersytet Kardynała Stefana Wyszyńskiego
-#Informatyka
+# YieldManagementWiley
 
-# Airline Yield Management using CPLEX + OPL + CMake
+Stochastic Yield Management optimization model implemented in **C++ using IBM ILOG CPLEX Concert API**.
 
-Implementation of a stochastic airline yield management model based on:
-
-H. Paul Williams — *Model Building in Mathematical Programming*.
-
-The project combines:
-- OPL modeling language
-- IBM CPLEX solver
-- C++ API integration
-- CMake build system
-- Multi-stage stochastic optimization
+This project is a refactored version of an original OPL (`.mod/.dat`) model, rewritten into a fully programmatic optimization model in modern C++.
 
 ---
 
-# Problem Description
+# Overview
 
-The model solves a multi-period airline pricing and seat allocation problem.
+The model solves a multi-period airline yield management problem under uncertain demand scenarios.
 
-The airline must:
-- decide ticket prices for multiple travel classes,
-- react dynamically to uncertain demand scenarios,
-- maximize expected profit,
-- determine fleet size (number of airplanes).
+The optimization determines:
 
-The implementation includes:
-- adaptive pricing decisions,
-- scenario-dependent recourse,
-- capacity constraints,
-- stochastic demand modeling.
+* number of airplanes,
+* ticket pricing strategy,
+* sales allocation,
+* scenario-dependent pricing decisions,
+* seat capacity management across multiple periods.
+
+The implementation uses:
+
+* IBM ILOG CPLEX
+* Concert Technology API
+* CMake
+* C++17
 
 ---
 
-# Technologies
+# Model Characteristics
 
-- C++
-- IBM ILOG CPLEX Optimization Studio 22.1.2
-- OPL
-- CMake
-- Visual Studio 2022
+## Time Structure
+
+The model contains:
+
+* 3 time periods
+* 3 passenger classes:
+
+  * First
+  * Business
+  * Economy
+* 3 pricing options per class
+* 3 stochastic demand scenarios
+
+---
+
+# Optimization Features
+
+Implemented constraints include:
+
+* single price selection per class,
+* stochastic scenario-based pricing,
+* demand limitations,
+* cumulative seat capacity tracking,
+* global aircraft capacity constraints,
+* multi-stage recourse decisions.
+
+The objective maximizes expected profit:
+
+```text
+Expected Revenue - Aircraft Cost
+```
+
+---
+
+# Tech Stack
+
+* C++17
+* IBM ILOG CPLEX 22.1.2
+* Concert API
+* CMake
+* Visual Studio 2022
 
 ---
 
@@ -51,8 +78,96 @@ The implementation includes:
 ```text
 YieldManagement/
 │
+├── data.cpp               # model input data
+├── data.h
+├── model.cpp              # Concert API optimization model
+├── model.h
+├── YieldManagement.cpp    # main executable
+│
 ├── CMakeLists.txt
-├── YieldManagement.cpp
-├── YieldMenag.mod
-├── YieldMenag.dat
+├── CMakePresets.json
+│
+├── YieldMenag.mod         # original OPL model
+├── YieldMenag.dat         # original OPL data
+│
 └── README.md
+```
+
+---
+
+# Build Instructions
+
+## Requirements
+
+Install:
+
+* Visual Studio 2022
+* CMake
+* IBM ILOG CPLEX Studio 22.1.2
+
+---
+
+# Configure CPLEX Path
+
+In `CMakeLists.txt`:
+
+```cmake
+set(CPLEX_ROOT
+    "C:/Program Files/IBM/ILOG/CPLEX_Studio_Community2212"
+)
+```
+
+Adjust the path if your installation differs.
+
+---
+
+# Build
+
+From the project root:
+
+```powershell
+cmake -B out/build
+cmake --build out/build --config Release
+```
+
+---
+
+# Run
+
+```powershell
+.\out\build\Release\yield_management.exe
+```
+
+---
+
+# Example Output
+
+```text
+====================================
+YIELD MANAGEMENT - CONCERT API
+====================================
+Status = Optimal
+Planes = 3
+Objective = 123456
+```
+
+---
+
+# Notes
+
+The repository contains both:
+
+* original OPL implementation,
+* fully rewritten C++ Concert API version.
+
+The `.mod/.dat` files are preserved for comparison and validation.
+
+---
+
+# Author
+
+**Artur Czarnecki**
+* Uniwersytet Kardynała Stefana Wyszyńskiego w Warszawie
+* Index: 123475
+
+
