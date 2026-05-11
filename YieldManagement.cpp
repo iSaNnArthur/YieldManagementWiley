@@ -1,7 +1,8 @@
-﻿#include <iostream>
+﻿#include <ilcplex/ilocplex.h>
 
-#include <ilcplex/ilocplex.h>
-#include <ilopl/iloopl.h>
+#include "model.h"
+
+#include <iostream>
 
 ILOSTLBEGIN
 
@@ -11,39 +12,90 @@ int main()
 
     try {
 
-        IloOplErrorHandler errHandler(env);
+        std::cout << "Before buildModel\n";
 
-        IloOplModelSource modelSource(env, "YieldMenag.mod");
+        // =========================================
+        // MODEL
+        // =========================================
 
-        IloOplSettings settings(env, errHandler);
+        IloModel model(env);
 
-        IloOplModelDefinition def(modelSource, settings);
+        // =========================================
+        // ZMIENNE GŁÓWNE
+        // =========================================
 
-        IloCplex cplex(env);
+        IloIntVar planes(env, 0, 6, "planes");
 
-        IloOplModel opl(def, cplex);
+        // =========================================
+        // BUDOWA MODELU
+        // =========================================
 
-        IloOplDataSource dataSource(env, "YieldMenag.dat");
+        buildModel(
+            env,
+            model,
+            planes
+        );
 
-        opl.addDataSource(dataSource);
+        std::cout << "After buildModel\n";
 
-        opl.generate();
+        // =========================================
+        // CPLEX
+        // =========================================
+
+        IloCplex cplex(model);
+
+        std::cout << "After IloCplex\n";
+
+        // =========================================
+        // EXPORT DEBUG
+        // =========================================
+
+        cplex.exportModel("debug.lp");
+
+        std::cout << "After export\n";
+
+        // opcjonalnie:
+        // cplex.setOut(env.getNullStream());
+
+        // =========================================
+        // SOLVE
+        // =========================================
 
         if (cplex.solve()) {
 
-            opl.postProcess();
+            std::cout << "\n";
+            std::cout << "====================================\n";
+            std::cout << "YIELD MANAGEMENT - CONCERT API\n";
+            std::cout << "====================================\n";
 
-            std::cout << "OBJ = "
+            std::cout << "Status = "
+                << cplex.getStatus()
+                << std::endl;
+
+            std::cout << "Planes = "
+                << cplex.getValue(planes)
+                << std::endl;
+
+            std::cout << "Objective = "
                 << cplex.getObjValue()
                 << std::endl;
+
+            std::cout << "====================================\n";
         }
         else {
-            std::cout << "No solution\n";
+
+            std::cout << "No solution found.\n";
         }
 
     }
     catch (IloException& e) {
-        std::cerr << e << std::endl;
+
+        std::cout << "CPLEX Exception:\n";
+        std::cout << e << std::endl;
+    }
+    catch (...) {
+
+        std::cout << "Unknown exception.\n";
     }
 
     env.end();

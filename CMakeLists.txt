@@ -4,33 +4,62 @@ project(YieldManagement)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# =====================================================
+# CPLEX ROOT
+# =====================================================
+
 set(CPLEX_ROOT
     "C:/Program Files/IBM/ILOG/CPLEX_Studio_Community2212"
 )
 
+# =====================================================
+# INCLUDE
+# =====================================================
+
 include_directories(
     "${CPLEX_ROOT}/concert/include"
     "${CPLEX_ROOT}/cplex/include"
-    "${CPLEX_ROOT}/opl/include"
 )
+
+# =====================================================
+# LIBRARIES
+# =====================================================
 
 link_directories(
-    "${CPLEX_ROOT}/opl/lib/x64_windows_msvc14/stat_mda"
+    "${CPLEX_ROOT}/concert/lib/x64_windows_msvc14/stat_mda"
+    "${CPLEX_ROOT}/cplex/lib/x64_windows_msvc14/stat_mda"
 )
+
+# =====================================================
+# EXECUTABLE
+# =====================================================
 
 add_executable(yield_management
+
     YieldManagement.cpp
+    model.cpp
+    data.cpp
 )
 
-target_compile_definitions(yield_management PRIVATE
-    IL_STD
-)
+# =====================================================
+# LINK
+# =====================================================
 
 target_link_libraries(yield_management
-    opl
+
+    concert
     ilocplex
     cplex2212
-    concert
-    cp
-    iljs
 )
+
+# =====================================================
+# WINDOWS
+# =====================================================
+
+if(WIN32)
+
+    target_compile_definitions(yield_management PRIVATE
+
+        IL_STD
+    )
+endif()
